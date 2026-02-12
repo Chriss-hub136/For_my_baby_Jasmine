@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+  :root {
+    --gold: #ff9d00;
+    --yellow: #ffda00;
+    --center: #2b1600;
+    --stem-dark: #2d4a1b;
+    --stem-light: #6a9c4a;
+    --love-pink: #ff4d6d;
+  }
+
+  body {
+    background: radial-gradient(circle at center, #111, #000);
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    overflow: hidden;
+    font-family: 'Georgia', serif;
+  }
+
+  #garden {
+    display: none;
+    width: 100%;
+    height: 90vh;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* The Improved Sunflower */
+  .sunflower {
+    position: absolute;
+    bottom: -10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform-origin: bottom;
+    animation: growIn 2.5s cubic-bezier(0.17, 0.67, 0.83, 1) forwards;
+  }
+
+  /* Thick, Tapered Stem */
+  .stem {
+    width: 12px;
+    background: linear-gradient(to right, var(--stem-dark), var(--stem-light), var(--stem-dark));
+    border-radius: 10px 10px 0 0;
+    position: relative;
+    box-shadow: inset 2px 0 5px rgba(0,0,0,0.3);
+  }
+
+  /* Detailed Leaf with Vein */
+  .leaf {
+    position: absolute;
+    width: 70px;
+    height: 40px;
+    background: var(--stem-dark);
+    border-radius: 100% 2% 100% 2%;
+    box-shadow: 2px 5px 15px rgba(0,0,0,0.4);
+    border-left: 2px solid var(--stem-light); /* The 'vein' */
+  }
+  .leaf.L { left: -65px; transform: rotate(-20deg); }
+  .leaf.R { right: -65px; transform: rotate(110deg); }
+
+  /* Double-Layered Flower Head */
+  .flower-head {
+    position: relative;
+    z-index: 10;
+    animation: sway 5s ease-in-out infinite alternate;
+  }
+
+  .petal {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: linear-gradient(to top, var(--gold), var(--yellow));
+    border-radius: 50% 50% 20% 20%;
+    transform-origin: bottom center;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+  }
+
+  .center-seeds {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(#4d2b00 20%, #1a0d00 100%);
+    border-radius: 50%;
+    z-index: 20;
+    border: 2px solid #000;
+  }
+
+  /* UI & Messaging */
+  .message-card {
+    display: none;
+    position: fixed;
+    top: 25%;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    padding: 40px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    color: white;
+    z-index: 1000;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    animation: fadeIn 3s ease-out forwards;
+  }
+
+  .btn {
+    position: fixed;
+    bottom: 40%;
+    padding: 18px 45px;
+    background: var(--love-pink);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1.3rem;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(255, 77, 109, 0.4);
+    z-index: 2000;
+    transition: 0.3s;
+  }
+
+  @keyframes growIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes sway { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+  <div id="garden"></div>
+
+  <div class="message-card" id="msgCard">
+    <h1 style="color: var(--yellow); font-style: italic;">For My Beautiful Girl</h1>
+    <p style="font-size: 1.3rem; line-height: 1.8;">
+      I planted a garden of sunflowers, but even a thousand of them 
+      could never be as bright as your smile. 
+      <br><br>
+      <strong>I love you more than anything. ❤️</strong>
+    </p>
+  </div>
+
+  <button class="btn" id="startBtn" onclick="reveal()">Click di sini, bilis!</button>
+
+  <script>
+    function createSunflower(x, scale, delay) {
+      const sf = document.createElement('div');
+      sf.className = 'sunflower';
+      sf.style.left = x + '%';
+      sf.style.transform = `scale(${scale})`;
+      sf.style.animationDelay = delay + 's';
+      sf.style.zIndex = Math.floor(scale * 10);
+
+      const head = document.createElement('div');
+      head.className = 'flower-head';
+      head.style.width = '120px';
+      head.style.height = '120px';
+
+      // Layer 1: Back petals (Darker)
+      for(let i=0; i<18; i++) {
+        const p = document.createElement('div');
+        p.className = 'petal';
+        p.style.width = '25px'; p.style.height = '60px';
+        p.style.filter = 'brightness(0.8)';
+        p.style.transform = `translate(-50%, -100%) rotate(${i * 20}deg) scale(1.1)`;
+        head.appendChild(p);
+      }
+
+      // Layer 2: Front petals (Brighter)
+      for(let i=0; i<18; i++) {
+        const p = document.createElement('div');
+        p.className = 'petal';
+        p.style.width = '20px'; p.style.height = '55px';
+        p.style.transform = `translate(-50%, -100%) rotate(${(i * 20) + 10}deg)`;
+        head.appendChild(p);
+      }
+
+      const center = document.createElement('div');
+      center.className = 'center-seeds';
+      center.style.width = '55px'; center.style.height = '55px';
+      
+      const stem = document.createElement('div');
+      stem.className = 'stem';
+      stem.style.height = (300 + Math.random() * 200) + 'px';
+
+      // Add Leaves
+      const l1 = document.createElement('div'); l1.className = 'leaf L'; l1.style.top = '100px';
+      const l2 = document.createElement('div'); l2.className = 'leaf R'; l2.style.top = '180px';
+      
+      stem.appendChild(l1); stem.appendChild(l2);
+      head.appendChild(center);
+      sf.appendChild(head);
+      sf.appendChild(stem);
+      document.getElementById('garden').appendChild(sf);
+    }
+
+    function reveal() {
+      document.getElementById('garden').style.display = 'block';
+      for(let i=0; i<12; i++) {
+        createSunflower(i * 8, 0.4 + Math.random() * 0.8, i * 0.15);
+      }
+      document.getElementById('msgCard').style.display = 'block';
+      document.getElementById('startBtn').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>
